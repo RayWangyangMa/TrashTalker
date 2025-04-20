@@ -29,16 +29,17 @@ def extract_insult_lines(content):
             if insult:
                 lines.append(insult)
     
-    # If no numbered lines found, split the paragraph into sentences
+    # If no numbered lines found, try to extract the insult directly
     if not lines and content:
-        # Split by sentence-ending punctuation
-        sentences = re.split(r'(?<=[.!?])\s+', content)
-        # Filter out empty sentences and take up to NUM_SENTENCES
-        lines = [s.strip() for s in sentences if s.strip()]
-        lines = lines[:NUM_SENTENCES]
+        # Try to clean up the content if it contains a single insult
+        content = content.strip()
+        if content and not content.startswith("[") and len(content) > 10:
+            # Remove any numbering or quotes
+            clean = re.sub(r'^\d+\.\s*', '', content)
+            clean = clean.strip('"\'')
+            lines.append(clean)
     
     return lines[:NUM_SENTENCES]
-
 def generate_insults(language):
     prompt = random.choice(PROMPT_PRESETS[language])
 

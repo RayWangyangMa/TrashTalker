@@ -50,6 +50,7 @@ class InsultGeneratorOverlay:
         instructions = tk.Label(self.root, text="F9: Generate new insults | Click on an insult to copy to clipboard", 
                              bg="#2E2E2E", fg="yellow", font=("Arial", 9))
         instructions.pack(pady=5)
+
         
         # Preview frame
         preview_frame = tk.Frame(self.root, bg="#363636", bd=1, relief=tk.SUNKEN)
@@ -63,16 +64,16 @@ class InsultGeneratorOverlay:
         self.insult_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
         # Generate initial insults when app starts
-        self.generate_insults_thread("English")
+        self.generate_insults("English")  # Fixed function name here
 
     def generate_button_clicked(self):
         if self.is_generating:
             return
         
         self.is_generating = True
-        threading.Thread(target=self.generate_insults_thread, args=("English",)).start()
+        threading.Thread(target=self.generate_insults, args=("English",)).start()
 
-    def generate_insults_thread(self, language="English"):
+    def generate_insults(self, language="English"):  # Consistent function name
         try:
             self.status_var.set("Generating...")
             
@@ -80,36 +81,59 @@ class InsultGeneratorOverlay:
             for widget in self.insult_frame.winfo_children():
                 widget.destroy()
             
-            self.current_insults = generate_insults(language)
-            self.root.after(0, self.update_insult_buttons)
-            self.root.after(0, lambda: self.status_var.set("Ready - Click an insult to copy"))
+            # Generate insults
+            insults = generate_insults(language)
+            
+            # Function to update UI in main thread
+            def update_ui():
+                # Set the insults in the main thread
+                self.current_insults = insults.copy()  # Make a copy to ensure thread safety
+                print(f"Updated self.current_insults to: {self.current_insults}")
+                self.update_insult_buttons()
+                self.status_var.set("Ready - Click an insult to copy")
+            
+            # Schedule the UI update function on the main thread
+            self.root.after(100, update_ui)
         except Exception as e:
+            print(f"Error in generate_insults: {str(e)}")
             self.root.after(0, lambda: self.status_var.set(f"Error: {str(e)[:20]}..."))
         finally:
             self.is_generating = False
 
     def update_insult_buttons(self):
-        for i, insult in enumerate(self.current_insults, 1):
-            # Create a frame for this insult
-            insult_container = tk.Frame(self.insult_frame, bg="#404040", bd=1, relief=tk.RAISED)
-            insult_container.pack(fill=tk.X, pady=5, padx=5)
+        # Debug print
+        print(f"update_insult_buttons called, insults: {self.current_insults}")
+        
+        # Clear any existing insult buttons
+        for widget in self.insult_frame.winfo_children():
+            widget.destroy()
+        
+        # Debug print
+        print(f"Creating {len(self.current_insults)} buttons")
+        
+        # Create a new button for each insult
+        for i, insult in enumerate(self.current_insults):
+            print(f"Creating button for insult: {insult}")
             
-            # Create the insult button that copies when clicked
-            insult_btn = tk.Button(
-                insult_container, 
-                text=f"{i}. {insult}", 
-                bg="#404040", 
+            # Important: Create a closure to capture the current insult
+            def create_command(insult_text=insult):
+                return lambda: self.copy_to_clipboard(insult_text)
+            
+            button = tk.Button(
+                self.insult_frame,
+                text=f"{i+1}. {insult}",
+                bg="#404040",
                 fg="white",
-                wraplength=350,  # Allow text to wrap
+                wraplength=350,
                 justify=tk.LEFT,
                 anchor="w",
-                bd=0,
-                padx=10,
                 pady=8,
-                command=lambda text=insult: self.copy_to_clipboard(text)
+                padx=10,
+                command=create_command()
             )
-            insult_btn.pack(fill=tk.X)
-
+            button.pack(fill=tk.X, pady=5, padx=5)
+            print(f"Created button for insult {i+1}")
+    
     def copy_to_clipboard(self, text):
         pyperclip.copy(text)
         self.status_var.set("Copied to clipboard!")
