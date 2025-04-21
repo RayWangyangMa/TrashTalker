@@ -19,7 +19,7 @@ TrashTalker is a desktop application that generates offensive insults using a lo
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/TrashTalker.git
+   git clone https://github.com/RayWangyangMa/TrashTalker.git
    cd TrashTalker
    ```
 
@@ -38,7 +38,7 @@ TrashTalker is a desktop application that generates offensive insults using a lo
 
 1. Start LM Studio and load the llama2-13b-psyfighter2 model
 2. Start the LM Studio server:
-   - Go to the "Server" tab in LM Studio
+   - Go to the "Developer" tab in LM Studio
    - Click "Start Server"
    - Ensure the server is running on `http://localhost:1234`
 
@@ -52,6 +52,8 @@ TrashTalker is a desktop application that generates offensive insults using a lo
 1. Press **F9** to generate new insults
 2. Click on any insult to copy it to your clipboard
 3. The application will always stay on top of other windows for easy access
+   
+![2025-04-20](https://github.com/user-attachments/assets/6dd4ede5-5056-47ec-aa74-302e2eeab8ea)
 
 ## Customization
 
@@ -62,10 +64,6 @@ You can customize the prompt templates in `prompt_templates.py` to change the st
 - **"Error connecting to LM Studio API"**: Make sure LM Studio is running and the server is started on port 1234
 - **"Model not found"**: Ensure you have downloaded the llama2-13b-psyfighter2 model in LM Studio
 - **"Application not responding"**: The LLM may be processing - give it a moment to generate content
-
-## License
-
-[MIT License](LICENSE)
 
 ## Disclaimer
 
