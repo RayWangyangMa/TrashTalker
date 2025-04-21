@@ -19,7 +19,7 @@ TrashTalker is a desktop application that generates offensive insults using a lo
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/TrashTalker.git
+   git clone https://github.com/RayWangyangMa/TrashTalker.git
    cd TrashTalker
    ```
 
