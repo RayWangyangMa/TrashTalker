@@ -52,6 +52,8 @@ TrashTalker is a desktop application that generates offensive insults using a lo
 1. Press **F9** to generate new insults
 2. Click on any insult to copy it to your clipboard
 3. The application will always stay on top of other windows for easy access
+   
+![2025-04-20](https://github.com/user-attachments/assets/6dd4ede5-5056-47ec-aa74-302e2eeab8ea)
 
 ## Customization
 
